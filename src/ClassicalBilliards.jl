@@ -1,5 +1,12 @@
-module ClassicalBilliards
+using StaticArrays 
+using LinearAlgebra
+using CoordinateTransformations, Rotations
 
-# Write your package code here.
+abstract type AbsCurve end
+abstract type AbsDomain end
+abstract type AbsBilliard end
+abstract type AbsBoundaryCondition end
 
-end
+include("geometry.jl")
+
+
