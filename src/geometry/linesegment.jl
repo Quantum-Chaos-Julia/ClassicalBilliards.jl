@@ -1,3 +1,4 @@
+
 #line segments
 line_eq(pt0::SVector{2,T}, pt1::SVector{2,T}, t) where {T<:Number} = @. (pt1 - pt0) * t + pt0
 line_domain(x0,y0,x1,y1,x,y) = ((y1-y0)*x-(x1-x0)*y+x1*y0-y1*x0)
@@ -13,16 +14,19 @@ struct LineSegment{T}  <: AbsLine where T<:Real
     length::T
 end
 
+abstract type AbsVirtLine <: AbsLine end
+
 # used to define subdomain axis of fundamnetal domain_fun for composite findamental domains like in stadium
-struct VirtLineSegment{T}  <: AbsLine where T<:Real
+struct VirtLineSegment{T}  <: AbsVirtLine where T<:Real
     pt0::SVector{2,T}
     pt1::SVector{2,T}
     orientation::Int64
     length::T
+    domain_exit_idx::Int64
 end
 
 # used to define symetry axis of fundamnetal domain_fun
-struct SymLineSegment{T}  <: AbsLine where T<:Real
+struct SymLineSegment{T}  <: AbsVirtLine where T<:Real
     pt0::SVector{2,T}
     pt1::SVector{2,T}
     orientation::Int64
@@ -36,10 +40,10 @@ function LineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}; orientation = 1) wher
     return LineSegment(pt0,pt1,orientation,L)
 end
 
-function VirtLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}; orientation = 1) where T<:Real
+function VirtLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}, domain_exit_idx; orientation = 1,) where T<:Real
     x, y = pt1 .- pt0        
     L = hypot(x,y)
-    return VirtLineSegment(pt0,pt1,orientation,L)
+    return VirtLineSegment(pt0,pt1,orientation,L,domain_exit_idx)
 end
 
 function SymLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}; orientation = 1) where T<:Real
@@ -57,7 +61,7 @@ function curve(line::L, ts::AbstractArray) where {L<:AbsLine}
 end
 
 # returns negative value inside
-function domain_fun(line::L, pt) where {L<:AbsLine}
+function domain_fun(line::L, pt::SVector{2,T}) where {L<:AbsLine, T<:Real}
     let pt0 = line.pt0 
         pt1 = line.pt1
         orientation = line.orientation

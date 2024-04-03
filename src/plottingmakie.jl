@@ -1,37 +1,62 @@
 #include("../abstracttypes.jl")
 #include("../utils/gridutils.jl")
-using Makie
-using StaticArrays
+
 #helper functions
-function plot_heatmap!(f,x,y,Z ;vmax = 1.0,log=(false,-5.0), cmap=Reverse(:gist_heat),hmargs=Dict(),axargs=Dict())
-    if log[1]
-        X = log10.(Z)
-        ax = Axis(f[1,1],axargs...)        
-        m = findmax(X)[1]
-        range_val = (log[2],m*vmax)
-        hmap = heatmap!(ax,x, y, X, colormap = cmap, colorrange=range_val, hmargs...)
-        ax.aspect=DataAspect()
-        Colorbar(f[1,2], colormap = cmap, limits = Float64.(range_val),tellheight=true)
-        rowsize!(f.layout, 1, ax.scene.px_area[].widths[2])
-    else
-        ax = Axis(f[1,1],axargs...)        
-        m = findmax(Z)[1]
-        range_val = (0,m*vmax)
-        hmap = heatmap!(ax,x, y, Z, colormap = cmap, colorrange=range_val, hmargs...)
-        ax.aspect=DataAspect()
-        Colorbar(f[1,2], colormap = cmap, limits = Float64.(range_val),tellheight=true)
-        rowsize!(f.layout, 1, ax.scene.px_area[].widths[2])
+export plot_domain!, plot_domain_fun!, plot_curve!, plot_billiard!
+#curve and billiard ploting
+function plot_billiard!(ax, billiard::AbsBilliard; dens = 20.0)
+    for dom in billiard.domains
+        for crv in dom.boundary
+            plot_curve!(ax, crv; dens)
+        end
     end
-    return hmap, ax
 end
 
-function plot_heatmap_balaced!(f,x,y,Z ;vmax = 1.0, cmap=Reverse(:balance),hmargs=Dict(),axargs=Dict())
-    ax = Axis(f[1,1],axargs...)        
-    m = findmax(abs, Z)[1]
-    range_val = (-m*vmax,m*vmax)
-    hmap = heatmap!(ax,x, y, Z, colormap = cmap, colorrange=range_val, hmargs...)
+function plot_curve!(ax, crv::AbsCurve; dens = 20.0)
+    L = crv.length
+    grid = max(round(Int, L*dens),3)
+    t = range(0.0,1.0, grid)
+    pts = curve(crv,t)
+    lines!(ax, pts, color = :black )
     ax.aspect=DataAspect()
-    Colorbar(f[1,2], colormap = cmap, limits = Float64.(range_val),tellheight=true)
-    rowsize!(f.layout, 1, ax.scene.px_area[].widths[2])
-    return hmap, ax
+end
+
+function plot_domain_fun!(f, curve::C; xlim=(-1.0,1.0),ylim=(-1.0,1.0), dens=100.0, hmargs=Dict(),cmap=:binary) where {C<:AbsCurve}
+    d = one(dens)/dens
+    x_grid = range(xlim... ; step=d)
+    y_grid = range(ylim... ; step=d)
+    pts = [SVector(x,y) for y in y_grid for x in x_grid]
+    Z = reshape(domain_fun(curve,pts),length(x_grid),length(y_grid))
+    hmap, ax = plot_heatmap_balaced!(f,x_grid,y_grid,Z) 
+    ax.aspect=DataAspect()
+    return ax, hmap
+end
+
+
+function plot_domain!(f, domain::D; xlim=(-1.0,1.0),ylim=(-1.0,1.0), dens=100.0, hmargs=Dict(),cmap=:binary) where {D<:AbsDomain}
+    d = one(dens)/dens
+    x_grid = range(xlim... ; step=d)
+    y_grid = range(ylim... ; step=d)
+    pts = [SVector(x,y) for y in y_grid for x in x_grid]
+    #Z = is_inside(domain,pts)
+    Z = reshape([all(r) for r in eachrow(is_inside(domain,pts))],length(x_grid),length(y_grid))
+    hmap, ax = plot_heatmap!(f, x_grid, y_grid, Z, cmap = cmap, vmax=1.0 ,hmargs...)
+    ax.aspect=DataAspect()
+    return ax, hmap
+end
+
+
+function plot_domain!(f, billiard::B; xlim=(-1.0,1.0),ylim=(-1.0,1.0), dens=100.0, hmargs=Dict(),cmap=:binary) where {B<:AbsBilliard}
+    d = one(dens)/dens
+    x_grid = range(xlim... ; step=d)
+    y_grid = range(ylim... ; step=d)
+    pts = [SVector(x,y) for y in y_grid for x in x_grid]
+    #Z = is_inside(domain,pts)
+    domains = [[all(r) for r in eachrow(is_inside(domain,pts))] for domain in billiard.domains]
+    for dom in domains
+        Z = reshape(dom,length(x_grid),length(y_grid))
+        hmap, ax = plot_heatmap!(f, x_grid, y_grid, Z, cmap = cmap, vmax=1.0 ,hmargs...)
+    end
+    ax.aspect=DataAspect()
+    return ax, hmap
 end

@@ -20,11 +20,11 @@ function CircleSegment(R, arc_angle, shift_angle, x0, y0; orientation = 1)
     return CircleSegment(R,arc_angle,shift_angle,center,orientation,L)
 end
 
-
 # returns SVector(x,y)
 function curve(circle::L, t) where {L<:CircleSegment}
     return circle_eq(circle.radius, circle.arc_angle, circle.shift_angle, circle.center, t)
 end
+
 function curve(circle::L, ts::AbstractArray) where {L<:CircleSegment}
     let R = circle.radius, c = circle.center, a=circle.arc_angle, s=circle.shift_angle 
         return collect(circle_eq(R, a, s, c, t) for t in ts)
@@ -32,7 +32,7 @@ function curve(circle::L, ts::AbstractArray) where {L<:CircleSegment}
 end
 
 # returns negative value inside
-function domain_fun(circle::L, pt) where {L<:CircleSegment}
+function domain_fun(circle::L, pt::SVector{2,T}) where {L<:CircleSegment, T<:Real}
     return circle_domain(circle.radius, circle.center, pt[1], pt[2])*circle.orientation
 end
 
