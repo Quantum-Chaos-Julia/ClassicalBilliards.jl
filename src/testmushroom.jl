@@ -21,36 +21,44 @@ textheme = Theme(fontsize = 8,
                         
             )
 set_theme!(textheme)
+#=
+function check_subdomain!(particle,billiard)
+    idx = 1
+    for dom in billiard.subdomains
+        if all(is_inside(dom, particle.r))
+            particle.subdomain = idx
+        end
+    idx +=1
+    end
+end
+=#
+#check_subdomain
 
-stad = Stadium(0.5)
+mushroom = Mushroom(0.75)
 
 f = Figure(size=(1000,1000))
 ax = Axis(f[1,1])
-plot_billiard!(ax,stad; plot_virtual = true)
+plot_billiard!(ax,mushroom; plot_virtual = true)
 display(f)
 #trajectory(p,stad,100)
 
 
 #scatter!(ax, p.r[1], p.r[2])
 #arrows!(ax, [p.r[1]], [p.r[2]], [p.v[1]], [p.v[2]]; lengthscale = 0.05)
-p = Particle(1.0,0.6,-1.0,1.2;subdomain=1)
-T = 20000
+p = Particle(0.5,0.5,-1.0,-1.3;subdomain=1)
+
+T = 10000
+#pts, vel, ts = trajectory(p,mushroom,T; dt = 0.01)
 
 f = Figure(size=(1000,1000))
 ax = Axis(f[1,1])
-plot_trajectory!(ax, p, stad, T; dt = 0.01)
+plot_trajectory!(ax, p, mushroom, T; dt = 0.01,traj_args = Dict(:alpha=>0.25), full_domain=true, plot_virtual = false, plot_velocity=false)
 display(f)
 
 
-p = Particle(1.0,0.6,-1.0,1.2;subdomain=1)
-@btime trajectory(p,stad,100000; dt = 0.01)
+f = Figure(size=(1000,1000))
+ax = Axis(f[1,1])
+plot_trajectory!(ax, p, mushroom, T; dt = 0.01,traj_args = Dict(:alpha=>0.25), full_domain=true, plot_virtual = true, plot_velocity=true)
+display(f)
 
 
-#type = typeof(1.0)
-#typeof(type(pi))
-#p = Particle(1.0,0.6,-1.0,1.2;subdomain=1)
-#pts1,vel1,ts = trajectory(p,stad,100000; dt = 0.01)
-
-#ts
-
-#append!(pts,pts1)

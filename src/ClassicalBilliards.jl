@@ -4,11 +4,13 @@ using StaticArrays
 using LinearAlgebra
 using CoordinateTransformations, Rotations
 using ForwardDiff
+using Elliptic
 using Roots
 using Makie
 using SavingPlotting
 
 abstract type AbsCurve end
+abstract type AbsSymmetry end
 abstract type AbsDomain end
 abstract type AbsBilliard end
 abstract type AbsBoundaryCondition end
