@@ -41,3 +41,16 @@ function domain_fun(circle::L, pts::AbstractArray) where {L<:CircleSegment}
     return collect(circle_domain(R, c, pt[1], pt[2])*orientation for pt in pts)
     end
 end
+
+# arc length
+function arc_length(circle::L, pt::SVector{2,T}) where {L<:CircleSegment, T<:Real}
+    center = circle.center
+    angle = atan(pt[2]-center[2], pt[1]-center[1]) - circle.shift_angle
+    return circle.radius*angle
+end
+
+#=
+function arc_length(circle::L, pts::AbstractArray) where {L<:CircleSegment}
+    return collect(arc_length(circle, pt) for pt in pts)
+end
+=#

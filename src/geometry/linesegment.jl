@@ -22,15 +22,16 @@ struct VirtLineSegment{T}  <: AbsVirtLine where T<:Real
     pt1::SVector{2,T}
     orientation::Int64
     length::T
-    domain_exit_idx::Int64
+    domain_exit_idx::Int64 #encodes the symetry sector the particle transitions into when crossing the line
 end
 
 # used to define symetry axis of fundamnetal domain_fun
-struct SymLineSegment{T}  <: AbsVirtLine where T<:Real
+struct SymLineSegment{T,S}  <: AbsVirtLine where {T<:Real, S<:AbsSymmetry}
     pt0::SVector{2,T}
     pt1::SVector{2,T}
     orientation::Int64
     length::T
+    symmetry::S
 end
 
 #constructors
@@ -46,10 +47,10 @@ function VirtLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}, domain_exit_idx; 
     return VirtLineSegment(pt0,pt1,orientation,L,domain_exit_idx)
 end
 
-function SymLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}; orientation = 1) where T<:Real
+function SymLineSegment(pt0::SVector{2,T}, pt1::SVector{2,T}, sym; orientation = 1) where T<:Real
     x, y = pt1 .- pt0        
     L = hypot(x,y)
-    return SymLineSegment(pt0,pt1,orientation,L)
+    return SymLineSegment(pt0,pt1,orientation,L, sym)
 end
 
 # returns SVector(x,y)
@@ -76,3 +77,15 @@ function domain_fun(line::L, pts::AbstractArray) where {L<:AbsLine}
     return collect(line_domain(pt0[1],pt0[2],pt1[1],pt1[2],pt[1],pt[2])*orientation for pt in pts)
     end
 end
+
+# arc length
+function arc_length(line::L, pt::SVector{2,T}) where {L<:AbsLine, T<:Real}
+    r0 = line.pt0
+    x, y = pt .- r0
+    return hypot(x, y)
+end
+#=
+function arc_length(line::L, pts::AbstractArray) where {L<:AbsLine}
+    return collect(arc_length(line, pt) for pt in pts)
+end
+=#

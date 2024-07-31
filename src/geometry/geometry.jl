@@ -1,9 +1,16 @@
+include("symmetry.jl")
+export XReflection, YReflection, XYReflection, new_sector, symmetry_action
 include("linesegment.jl")
 export LineSegment, VirtLineSegment, SymLineSegment
 include("circlesegment.jl")
 export CircleSegment
 include("stadium.jl")
 export Stadium
+include("mushroom.jl")
+export Mushroom
+include("limacon.jl")
+export Limacon, LimaconSegment
+
 
 export Domain, Billiard, is_inside, curve, domain_fun, domain_gradient_vector
 struct Domain{T} <: AbsDomain where T<:Real
@@ -47,7 +54,9 @@ function domain_gradient_vector(curve::C, pts::AbstractArray) where {C<:AbsCurve
     return gs
 end
 
+#=
 struct Billiard{T} <: AbsBilliard where T<:Real
-    domains::Vector{AbsDomain}
+    subdomains::Vector{AbsDomain}
     #symmetries::
 end
+=#
