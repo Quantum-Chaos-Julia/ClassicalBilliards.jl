@@ -1,5 +1,6 @@
 struct Mushroom{T} <: AbsBilliard where T<:Real
     subdomains::Vector{AbsDomain}
+    fundamental_boundary::Vector
     symmetries::Vector{CoordinateTransformations.Transformation}
 end
 
@@ -27,7 +28,8 @@ function Mushroom(half_width,stem_heigth=1.0;R=1.0,origin=SVector(0.0,0.0))
    
     stem_dom = Domain{Float64}([left_seg, bottom_seg,right_seg, top_seg],3)
     symmetries = [ident, reflect_x] #order coresponds to symmetry sectors
-    return Mushroom{typeof(half_width)}([circle_dom, triangle_dom, stem_dom], symmetries)
+    fundamental_boundary = [bottom_seg,right_seg, x_seg,circle]
+    return Mushroom{typeof(half_width)}([circle_dom, triangle_dom, stem_dom], fundamental_boundary, symmetries)
 end
 
 

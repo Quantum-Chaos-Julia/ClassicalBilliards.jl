@@ -92,6 +92,7 @@ end
 struct Limacon{T} <: AbsBilliard where T<:Real
     parameter::T
     subdomains::Vector{AbsDomain}
+    fundamental_boundary::Vector
     symmetries::Vector{CoordinateTransformations.Transformation}
 end
 
@@ -104,6 +105,7 @@ function Limacon(a)
     type = typeof(a)
     x_segment= SymLineSegment(r0, r1, y_ref)
     limacon_dom =  Domain{type}([limacon,x_segment],1)
+    fundamental_boundary = [limacon]
     symmetries = [ident, reflect_y]
-    return Limacon{type}(a, [limacon_dom], symmetries)
+    return Limacon{type}(a, [limacon_dom], fundamental_boundary, symmetries)
 end

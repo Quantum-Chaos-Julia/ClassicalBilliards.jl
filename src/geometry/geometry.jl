@@ -12,7 +12,7 @@ include("limacon.jl")
 export Limacon, LimaconSegment
 
 
-export Domain, Billiard, is_inside, curve, domain_fun, domain_gradient_vector
+export Domain, AbsBilliard, is_inside, curve, domain_fun, domain_gradient_vector
 struct Domain{T} <: AbsDomain where T<:Real
     boundary::Vector{AbsCurve}
     id::Int64
@@ -40,6 +40,17 @@ function is_inside(curve::C, pts::AbstractArray) where {C<:AbsCurve}
     return d .< zero(eltype(pts[1])) 
     end
 end
+
+
+#check if points inside for billiard. Returns only true or false,
+function is_inside(billiard::B, pt::SVector{2,T}) where {B<:AbsBilliard, T<:Real}
+    return any([all(is_inside(domain, pt)) for domain in billiard.subdomains])
+end
+
+function is_inside(billiard::B, pts::AbstractArray) where {B<:AbsBilliard}
+    return [is_inside(billiard, pt) for pt in pts]
+end
+
 
 #gradient of domain_function gives normal direcrion
 function domain_gradient_vector(curve::C, pt::SVector{2,T}) where {C<:AbsCurve, T<:Real}

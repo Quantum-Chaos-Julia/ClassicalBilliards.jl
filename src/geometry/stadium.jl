@@ -1,5 +1,6 @@
 struct Stadium{T} <: AbsBilliard where T<:Real
     subdomains::Vector{AbsDomain}
+    fundamental_boundary::Vector
     symmetries::Vector{CoordinateTransformations.Transformation}
 end
 
@@ -19,7 +20,8 @@ function Stadium(half_width)
     circle_dom =  Domain{Float64}([circle,x_segment,y_segment],1)
     rectangle_dom = Domain{Float64}([t_seg, l_seg, b_seg, r_seg],2)
     symmetries = [ident, reflect_x, reflect_xy, reflect_y] #order coresponds to symmetry sectors
-    return Stadium{typeof(half_width)}([circle_dom,rectangle_dom], symmetries)
+    fundamental_boundary = [circle, t_seg]
+    return Stadium{typeof(half_width)}([circle_dom,rectangle_dom], fundamental_boundary, symmetries)
 end
 
 
