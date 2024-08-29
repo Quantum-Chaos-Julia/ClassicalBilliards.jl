@@ -15,6 +15,7 @@ SavingPlotting = "400dd96f-0f71-4812-9cea-d88fba4b056c"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+Makie = "0.21"
 julia = "1.9"
 
 [extras]
