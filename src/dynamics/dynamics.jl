@@ -15,7 +15,7 @@ end
 
 
 function iterate_bounce!(particle::P, billiard::B; dt = 1.0 ) where {P<:AbsParticle, B<:AbsBilliard}
-    domain = billiard.subdomains[particle.subdomain]
+    domain = billiard.fundamental_domain.subdomains[particle.subdomain]
         
     collision_time, idx = find_intersection(particle, domain; dt)
     crv = domain.boundary[idx]
@@ -32,7 +32,7 @@ function iterate_bounce!(particle::P, billiard::B; dt = 1.0 ) where {P<:AbsParti
     =#
 end
 
-function trajectory(particle::P, billiard::B, T::Int; dt = 1.0, full_domain=true) where {P<:AbsParticle, B<:AbsBilliard}
+function trajectory(particle::P, billiard::B, T::Int; dt = 1.0, full_domain=false) where {P<:AbsParticle, B<:AbsBilliard}
     let p = particle
         pts = Vector{typeof(p.r)}(undef,T+1)
         vel = Vector{typeof(p.v)}(undef,T+1)

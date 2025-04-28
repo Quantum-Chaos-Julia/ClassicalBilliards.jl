@@ -66,6 +66,6 @@ function collision_rule!(particle::P, bc::BC, n) where {P<:AbsParticle, BC<:Tran
         v_n = dot(v,n)*n #normal velocity
         v_t = v .- v_n #tangetial velocity
         particle.v_b = SVector(norm(v_t),norm(v_n))
-        particle.subdomain = virt_line.next_id
+        particle.subdomain = bc.next_id
     end
 end

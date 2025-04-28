@@ -13,5 +13,4 @@ using BilliardGeometry
 include("particles/particles.jl")
 include("dynamics/dynamics.jl")
 
-
 end
