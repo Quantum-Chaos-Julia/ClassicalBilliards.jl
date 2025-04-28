@@ -4,6 +4,7 @@ authors = ["Crt Lozej"]
 version = "0.0.1-DEV"
 
 [deps]
+BilliardGeometry = "944b2192-ee8e-4a70-bd94-055ac7d6d7d6"
 CoordinateTransformations = "150eb455-5306-5404-9cee-2592286d6298"
 Elliptic = "b305315f-e792-5b7a-8f41-49f472929428"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
@@ -11,7 +12,6 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-SavingPlotting = "400dd96f-0f71-4812-9cea-d88fba4b056c"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
