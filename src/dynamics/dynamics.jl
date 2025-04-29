@@ -41,8 +41,14 @@ function trajectory(particle::P, billiard::B, T::Int; dt = 1.0, full_domain=fals
             ##println("$i, r=$(p.r), dom_idx=$(p.subdomain)")
             if full_domain
                 id = p.sym_sector
-                pts[i+1] = billiard.symmetries[id](p.r)
-                vel[i+1] = billiard.symmetries[id](p.v)
+                if id  == 1
+                    pts[i+1] = p.r
+                    vel[i+1] = p.v
+                else
+                    sym =  billiard.symmetries[id-1]
+                    pts[i+1] = apply_symmetry(sym, p.r)
+                    vel[i+1] = apply_symmetry(sym, p.v)
+                end
             else
                 pts[i+1] = p.r
                 vel[i+1] = p.v
