@@ -20,7 +20,8 @@ function iterate_bounce!(particle::P, billiard::B; dt = 1.0 ) where {P<:AbsParti
     crv = domain.boundary[idx]
     #particle.curve_idx = idx
     collision!(particle, crv, collision_time)
-    if typeof(crv.bc) <: Transparent
+    bc_type = typeof(crv.bc)
+    if bc_type <: Transparent || bc_type  <: ReflectionSymmetry
         iterate_bounce!(particle, billiard; dt)
     end
 end
