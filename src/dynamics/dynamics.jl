@@ -15,21 +15,14 @@ end
 
 
 function iterate_bounce!(particle::P, billiard::B; dt = 1.0 ) where {P<:AbsParticle, B<:AbsBilliard}
-    domain = billiard.fundamental_domain.subdomains[particle.subdomain]
-        
+    domain = billiard.fundamental_domain.subdomains[particle.subdomain]    
     collision_time, idx = find_intersection(particle, domain; dt)
     crv = domain.boundary[idx]
     #particle.curve_idx = idx
     collision!(particle, crv, collision_time)
-    #=
-    if typeof(crv) <: AbsVirtLine #repeat iteration on internal domain lines and symmetry lines
-        domain = billiard.subdomains[particle.subdomain]
-        
-        collision_time, idx = find_intersection(particle, domain; dt)
-        crv = domain.boundary[idx]
-        collision!(particle, crv, collision_time)
+    if typeof(crv.bc) <: Transparent
+        iterate_bounce!(particle, billiard; dt)
     end
-    =#
 end
 
 function trajectory(particle::P, billiard::B, T::Int; dt = 1.0, full_domain=false) where {P<:AbsParticle, B<:AbsBilliard}
