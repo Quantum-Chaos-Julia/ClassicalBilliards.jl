@@ -13,9 +13,12 @@ function collision!(particle::P, curve::C, time) where {P<:PointParticle, C<:Abs
     particle.time += time
 end
 
-
 function iterate_bounce!(particle::P, billiard::B; dt = 1.0 ) where {P<:AbsParticle, B<:AbsBilliard}
-    domain = billiard.fundamental_domain.subdomains[particle.subdomain]    
+    if typeof(billiard.fundamental_domain) <: SimpleDomain
+        domain = billiard.fundamental_domain
+    else
+        domain = billiard.fundamental_domain.subdomains[particle.subdomain]   
+    end 
     collision_time, idx = find_intersection(particle, domain; dt)
     crv = domain.boundary[idx]
     #particle.curve_idx = idx
