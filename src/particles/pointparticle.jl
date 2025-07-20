@@ -9,7 +9,7 @@ mutable struct PointParticle{T}  <: AbsParticle where T<:Real
 end
 
 PointParticle(x,y,vx,vy; m = 1.0, time = 0.0, subdomain=1, sym_sector=1, v_b = SVector(vx,vy)) = PointParticle{typeof(x)}(SVector(x,y),SVector(vx,vy),m,time,subdomain,sym_sector, v_b)
-PointParticle(point,velocity; m = 1.0, time = 0.0, subdomain=1, sym_sector=1, v_b = SVector(vx,vy)) = PointParticle{eltype(point)}(point,velocity,m,time,subdomain,sym_sector, v_b)
+PointParticle(point,velocity; m = 1.0, time = 0.0, subdomain=1, sym_sector=1, v_b = velocity) = PointParticle{eltype(point)}(point,velocity,m,time,subdomain,sym_sector, v_b)
 
 function propagate(part::P, t) where P<:PointParticle
     return @. part.r + part.v*t
